@@ -27,17 +27,23 @@ router.post("/user/object", verify, async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  const foundObjects = await Object.find();
-  if (!foundObjects.length)
-    res.status(200).send({ message: "You did not lose any objects" });
-  res.status(200).send(foundObjects);
+  try {
+    const foundObjects = await Object.find();
+    console.log(foundObjects);
+    res.status(200).send(foundObjects);
+  } catch (error) {
+    res.status(400).send(error);
+  }
 });
 
 router.get("/user/object", verify, async (req, res) => {
-  const foundObjects = await Object.find({ author: req.user._id });
-  if (!foundObjects.length)
-    res.status(200).send({ message: "You did not lose any objects" });
-  res.status(200).send(foundObjects);
+  try {
+    const foundObjects = await Object.find({ author: req.user._id });
+    console.log(foundObjects);
+    res.status(200).send(foundObjects);
+  } catch (error) {
+    res.status(400).send(error);
+  }
 });
 
 // Mofify an object
