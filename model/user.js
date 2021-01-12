@@ -10,6 +10,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         min: 4
+    },
+    password_confirmation: {
+        type: String,
+        min: 4
     }
 })
 
