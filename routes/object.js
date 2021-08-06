@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Object = require("../model/object");
+const { upload } = require('../helpers/filehelper');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -16,6 +17,7 @@ router.post("/user/object", verify, async (req, res) => {
     lost_city,
     lost_dpt,
     author: req.user._id,
+    images: []
   });
 
   try {
@@ -70,5 +72,40 @@ router.delete("/user/object/delete/:objectId", verify, async (req, res) => {
     res.status(404).send("object not deleted");
   }
 });
+
+router.put("/user/object/images/add/:objectId", upload.array('files'), async (req, res) => {
+  try{
+      let filesArray = [];
+      console.log(req.files);
+      req.files.forEach(element => {
+          const file = {
+              fileName: element.originalname,
+              filePath: element.path,
+              fileType: element.mimetype,
+              fileSize: fileSizeFormatter(element.size, 2)
+          }
+          filesArray.push(file);
+      });
+      const foundObject = await Object.findOneAndUpdate({
+        _id: req.params.objectId
+      }, {
+        images: filesArray
+      })
+      await foundObject.save();
+      res.status(201).send('Images Uploaded Successfully');
+  }catch(error) {
+      res.status(400).send(error.message);
+  }
+})
+
+const fileSizeFormatter = (bytes, decimal) => {
+  if(bytes === 0){
+      return '0 Bytes';
+  }
+  const dm = decimal || 2;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'YB', 'ZB'];
+  const index = Math.floor(Math.log(bytes) / Math.log(1000));
+  return parseFloat((bytes / Math.pow(1000, index)).toFixed(dm)) + ' ' + sizes[index];
+}
 
 module.exports = router;

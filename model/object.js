@@ -19,9 +19,10 @@ const objectSchema = new mongoose.Schema({
         type: Number,
         min: 1
     },
+    images: [Object],
     author: {
         type: mongoose.Schema.Types.ObjectId, ref: "User"
     }
-})
+}, {timestamps: true})
 
 module.exports = mongoose.model('Object', objectSchema)

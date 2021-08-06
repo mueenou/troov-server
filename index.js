@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const path = require('path')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const cors = require('cors')
@@ -16,6 +17,7 @@ mongoose.connect(
 // Middlewares
 app.use(express.json())
 app.use(cors())
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Import Routes
 const authRoute = require('./routes/auth')
